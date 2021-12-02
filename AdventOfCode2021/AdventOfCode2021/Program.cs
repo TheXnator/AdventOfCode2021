@@ -13,6 +13,7 @@ namespace AdventOfCode2021
 
             // Day 2
             Console.WriteLine(String.Format("Day 2 p. 1: {0}", GetFinalDepthMult()));
+            Console.WriteLine(String.Format("Day 2 p. 2: {0}", GetFinalAimDepthMult()));
         }
 
         static int GetDepthIncreases()
@@ -84,6 +85,33 @@ namespace AdventOfCode2021
                 else
                 {
                     depth = (dat[0] == "up") ? (depth - increase) : (depth + increase);
+                }
+            }
+
+            return hor * depth;
+        }
+
+        static int GetFinalAimDepthMult()
+        {
+            string filename = "day2inputs.txt";
+            int hor = 0;
+            int depth = 0;
+            int aim = 0;
+
+            string[] contents = File.ReadAllLines(filename);
+            foreach (string line in contents)
+            {
+                string[] dat = line.Split(" ");
+                int increase = Convert.ToInt32(dat[1]);
+
+                if (dat[0] == "forward")
+                {
+                    hor += increase;
+                    depth = depth + (aim * increase);
+                }
+                else
+                {
+                    aim = (dat[0] == "up") ? (aim - increase) : (aim + increase);
                 }
             }
 
