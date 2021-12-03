@@ -14,6 +14,9 @@ namespace AdventOfCode2021
             // Day 2
             Console.WriteLine(String.Format("Day 2 p. 1: {0}", GetFinalDepthMult()));
             Console.WriteLine(String.Format("Day 2 p. 2: {0}", GetFinalAimDepthMult()));
+
+            // Day 3
+            Console.WriteLine(String.Format("Day 3 p. 1: {0}", GetGammaEpsilon()));
         }
 
         static int GetDepthIncreases()
@@ -116,6 +119,42 @@ namespace AdventOfCode2021
             }
 
             return hor * depth;
+        }
+
+        static int GetGammaEpsilon()
+        {
+            string filename = "day3inputs.txt";
+            string gammabin = "";
+            string epsilonbin = "";
+
+            string[] contents = File.ReadAllLines(filename);
+            int len = contents[0].Length;
+
+            for (int i = 0; i < len; i++)
+            {
+                int zero = 0;
+                int one = 0;
+
+                foreach (string line in contents)
+                {
+                    if (line[i].Equals('0'))
+                    {
+                        zero++;
+                    }
+                    else
+                    {
+                        one++;
+                    }
+                }
+
+                gammabin = gammabin + ((zero > one) ? "0" : "1");
+                epsilonbin = epsilonbin + ((zero > one) ? "1" : "0");
+            }
+
+            int gamma = Convert.ToInt32(gammabin, 2);
+            int epsilon = Convert.ToInt32(epsilonbin, 2);
+
+            return gamma * epsilon;
         }
     }
 }
