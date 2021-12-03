@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AdventOfCode2021
 {
@@ -17,6 +19,7 @@ namespace AdventOfCode2021
 
             // Day 3
             Console.WriteLine(String.Format("Day 3 p. 1: {0}", GetGammaEpsilon()));
+            Console.WriteLine(String.Format("Day 3 p. 2: {0}", GetLifeSupport()));
         }
 
         static int GetDepthIncreases()
@@ -155,6 +158,84 @@ namespace AdventOfCode2021
             int epsilon = Convert.ToInt32(epsilonbin, 2);
 
             return gamma * epsilon;
+        }
+
+        static void ClearNonMatchingBitCriteria(List<string> contents, char common, int pos)
+        {
+            for (int i = 0; i < contents.Count; i++)
+            {
+                Console.WriteLine("comparing " + contents[i][pos] + " to " + common);
+                if (!contents[i][pos].Equals(common))
+                {
+                    Console.WriteLine("Removing " + contents[i]);
+                    contents.RemoveAt(i);
+                }
+            }
+
+        }
+
+        static void GetRating(List<string> contents, bool isoxygen)
+        {
+            for (int i = 0; i < contents[0].Length; i++)
+            {
+                if (!isoxygen)
+                {
+                    Console.WriteLine("Checking position: " + i);
+                }
+
+                int zero = 0;
+                int one = 0;
+
+                foreach (string line in contents)
+                {
+                    if (line[i].Equals('0'))
+                    {
+                        zero++;
+                    }
+                    else
+                    {
+                        one++;
+                    }
+                }
+
+                if (!isoxygen)
+                {
+                    Console.WriteLine("Zero: " + zero);
+                    Console.WriteLine("One: " + one);
+                }
+
+                if (contents.Count > 1)
+                {
+                    ClearNonMatchingBitCriteria(contents, zero > one ? (isoxygen ? '0' : '1') : (isoxygen ? '1' : '0'), i);
+                }
+
+                if (!isoxygen)
+                {
+                    Console.WriteLine("Kept:");
+
+                    foreach (string line in contents)
+                    {
+                        Console.WriteLine(line);
+                    }
+                }
+            }
+        }
+
+        static int GetLifeSupport()
+        {
+            string filename = "day3inputs.txt";
+
+            string[] contents = File.ReadAllLines(filename);
+            List<string> finaloxygen = contents.ToList();
+            List<string> finalco2 = contents.ToList();
+
+            GetRating(finaloxygen, true);
+            GetRating(finalco2, false);
+
+            Console.WriteLine(finaloxygen[0]);
+            Console.WriteLine(finalco2[0]);
+
+            return Convert.ToInt32(finaloxygen[0], 2) * Convert.ToInt32(finalco2[0], 2);
         }
     }
 }
