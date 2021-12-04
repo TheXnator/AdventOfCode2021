@@ -162,27 +162,26 @@ namespace AdventOfCode2021
 
         static void ClearNonMatchingBitCriteria(List<string> contents, char common, int pos)
         {
+            List<string> toremove = new List<string>();
+
             for (int i = 0; i < contents.Count; i++)
             {
-                Console.WriteLine("comparing " + contents[i][pos] + " to " + common);
                 if (!contents[i][pos].Equals(common))
                 {
-                    Console.WriteLine("Removing " + contents[i]);
-                    contents.RemoveAt(i);
+                    toremove.Add(contents[i]);
                 }
             }
 
+            foreach (string rem in toremove)
+            {
+                contents.Remove(rem);
+            }
         }
 
         static void GetRating(List<string> contents, bool isoxygen)
         {
             for (int i = 0; i < contents[0].Length; i++)
             {
-                if (!isoxygen)
-                {
-                    Console.WriteLine("Checking position: " + i);
-                }
-
                 int zero = 0;
                 int one = 0;
 
@@ -198,25 +197,9 @@ namespace AdventOfCode2021
                     }
                 }
 
-                if (!isoxygen)
-                {
-                    Console.WriteLine("Zero: " + zero);
-                    Console.WriteLine("One: " + one);
-                }
-
                 if (contents.Count > 1)
                 {
                     ClearNonMatchingBitCriteria(contents, zero > one ? (isoxygen ? '0' : '1') : (isoxygen ? '1' : '0'), i);
-                }
-
-                if (!isoxygen)
-                {
-                    Console.WriteLine("Kept:");
-
-                    foreach (string line in contents)
-                    {
-                        Console.WriteLine(line);
-                    }
                 }
             }
         }
@@ -231,9 +214,6 @@ namespace AdventOfCode2021
 
             GetRating(finaloxygen, true);
             GetRating(finalco2, false);
-
-            Console.WriteLine(finaloxygen[0]);
-            Console.WriteLine(finalco2[0]);
 
             return Convert.ToInt32(finaloxygen[0], 2) * Convert.ToInt32(finalco2[0], 2);
         }
