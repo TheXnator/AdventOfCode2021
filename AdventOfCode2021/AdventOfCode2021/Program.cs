@@ -23,7 +23,7 @@ namespace AdventOfCode2021
 
             // Day 4
             Console.WriteLine(String.Format("Day 4 p. 1: {0}", GetSquidBingoScore(true)));
-            //Console.WriteLine(String.Format("Day 4 p. 2: {0}", GetSquidBingoScore(false)));
+            Console.WriteLine(String.Format("Day 4 p. 2: {0}", GetSquidBingoScore(false)));
         }
 
         static int GetDepthIncreases()
@@ -224,14 +224,12 @@ namespace AdventOfCode2021
 
         static int CalculateBoardScore(List<List<string>> bingoboards, List<List<string>> bingoboardsmarked, int i, int bingonum)
         {
-            Console.WriteLine("");
             List<string> winningboard = bingoboards[i];
             int boardscore = 0;
             for (int boardpos = 0; boardpos < winningboard.Count; boardpos++)
             {
                 if (bingoboardsmarked[i][boardpos].Equals("0"))
                 {
-                    Console.WriteLine(Convert.ToInt32(winningboard[boardpos]));
                     boardscore += Convert.ToInt32(winningboard[boardpos]);
                 }
             }
@@ -247,8 +245,8 @@ namespace AdventOfCode2021
             string bingonums = contents[0];
             List<List<string>> bingoboards = new List<List<string>>();
             List<List<string>> bingoboardsmarked = new List<List<string>>();
-
             List<Dictionary<int, int[]>> bingoscores = new List<Dictionary<int, int[]>>();
+            List<int> wonboards = new List<int>();
 
             // generate bingo boards
             for (int i = 1; i < contents.Length; i++)
@@ -275,13 +273,10 @@ namespace AdventOfCode2021
             // play bingo
             foreach (string bingonum in bingonums.Split(","))
             {
-                Console.WriteLine("BINGO NUMBER: " + bingonum);
                 for (int i = 0; i < bingoboards.Count; i++)
                 {
                     for (int x = 0; x < bingoboards[i].Count; x++)
                     {
-                        //Console.WriteLine(bingonum + " " + i + " " + x + " " + bingoboards[i][x]);
-
                         if (bingoboards[i][x].Equals(bingonum))
                         {
                             bingoboardsmarked[i][x] = "1";
@@ -294,7 +289,11 @@ namespace AdventOfCode2021
 
                             if (bingoscores[i][1][rownum] == 5 || bingoscores[i][2][colnum] == 5)
                             {
-                                return CalculateBoardScore(bingoboards, bingoboardsmarked, i, Convert.ToInt32(bingonum));
+                                int boardscore = CalculateBoardScore(bingoboards, bingoboardsmarked, i, Convert.ToInt32(bingonum));
+
+                                if (!wonboards.Contains(i)) { wonboards.Add(i); }
+                                if (dofirst) { return boardscore; }
+                                if (wonboards.Count == bingoboards.Count) { return boardscore; }
                             }
                         }
 
