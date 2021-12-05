@@ -20,6 +20,10 @@ namespace AdventOfCode2021
             // Day 3
             Console.WriteLine(String.Format("Day 3 p. 1: {0}", GetGammaEpsilon()));
             Console.WriteLine(String.Format("Day 3 p. 2: {0}", GetLifeSupport()));
+
+            // Day 4
+            Console.WriteLine(String.Format("Day 4 p. 1: {0}", GetSquidBingoScore(true)));
+            //Console.WriteLine(String.Format("Day 4 p. 2: {0}", GetSquidBingoScore(false)));
         }
 
         static int GetDepthIncreases()
@@ -216,6 +220,89 @@ namespace AdventOfCode2021
             GetRating(finalco2, false);
 
             return Convert.ToInt32(finaloxygen[0], 2) * Convert.ToInt32(finalco2[0], 2);
+        }
+
+        static int CalculateBoardScore(List<List<string>> bingoboards, List<List<string>> bingoboardsmarked, int i, int bingonum)
+        {
+            Console.WriteLine("");
+            List<string> winningboard = bingoboards[i];
+            int boardscore = 0;
+            for (int boardpos = 0; boardpos < winningboard.Count; boardpos++)
+            {
+                if (bingoboardsmarked[i][boardpos].Equals("0"))
+                {
+                    Console.WriteLine(Convert.ToInt32(winningboard[boardpos]));
+                    boardscore += Convert.ToInt32(winningboard[boardpos]);
+                }
+            }
+
+            return boardscore * bingonum;
+        }
+
+        static int GetSquidBingoScore(bool dofirst)
+        {
+            string filename = "day4inputs.txt";
+
+            string[] contents = File.ReadAllLines(filename);
+            string bingonums = contents[0];
+            List<List<string>> bingoboards = new List<List<string>>();
+            List<List<string>> bingoboardsmarked = new List<List<string>>();
+
+            List<Dictionary<int, int[]>> bingoscores = new List<Dictionary<int, int[]>>();
+
+            // generate bingo boards
+            for (int i = 1; i < contents.Length; i++)
+            {
+                if (contents[i].Contains(" "))
+                {
+                    foreach (string num in contents[i].Split(" "))
+                    {
+                        if (!num.Equals(""))
+                        {
+                            bingoboards[bingoboards.Count - 1].Add(num);
+                            bingoboardsmarked[bingoboardsmarked.Count - 1].Add("0");
+                        }
+                    }
+                }
+                else
+                {
+                    bingoboards.Add(new List<string>());
+                    bingoboardsmarked.Add(new List<string>());
+                    bingoscores.Add(new Dictionary<int, int[]> { { 1, new int[5] }, { 2, new int[5] } });
+                }
+            }
+
+            // play bingo
+            foreach (string bingonum in bingonums.Split(","))
+            {
+                Console.WriteLine("BINGO NUMBER: " + bingonum);
+                for (int i = 0; i < bingoboards.Count; i++)
+                {
+                    for (int x = 0; x < bingoboards[i].Count; x++)
+                    {
+                        //Console.WriteLine(bingonum + " " + i + " " + x + " " + bingoboards[i][x]);
+
+                        if (bingoboards[i][x].Equals(bingonum))
+                        {
+                            bingoboardsmarked[i][x] = "1";
+
+                            int rownum = (int)Math.Floor((double)(x / 5));
+                            int colnum = x % 5;
+
+                            bingoscores[i][1][rownum]++;
+                            bingoscores[i][2][colnum]++;
+
+                            if (bingoscores[i][1][rownum] == 5 || bingoscores[i][2][colnum] == 5)
+                            {
+                                return CalculateBoardScore(bingoboards, bingoboardsmarked, i, Convert.ToInt32(bingonum));
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            return 0;
         }
     }
 }
